@@ -1,59 +1,43 @@
 package ua.tasklist.backendspringboot.entity;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.*;
+
+@NoArgsConstructor
+@Setter
+@EqualsAndHashCode
 @Entity
 public class Priority {
     private Long id;
     private String title;
     private String color;
 
+    //указываем, что поле заполняется в БД
+    //когда добавляем новый обьект он возвращается уже с новым id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     @Basic
-    @Column(name = "title", nullable = false, length = 45)
+    @Column(name = "title")
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     @Basic
-    @Column(name = "color", nullable = false, length = 45)
+    @Column(name = "color")
     public String getColor() {
         return color;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Priority priority = (Priority) o;
-        return Objects.equals(id, priority.id) &&
-                Objects.equals(title, priority.title) &&
-                Objects.equals(color, priority.color);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, color);
-    }
 }

@@ -1,11 +1,17 @@
 package ua.tasklist.backendspringboot.entity;
 
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.Objects;
 
+@NoArgsConstructor
+@Setter
+@EqualsAndHashCode
 @Entity
 public class Stat {
     private Long id;
@@ -13,7 +19,7 @@ public class Stat {
     private Long uncompletedTotal;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public Long getId() {
         return id;
     }
@@ -23,37 +29,18 @@ public class Stat {
     }
 
     @Basic
-    @Column(name = "completed_total", nullable = true)
+    @Column(name = "completed_total")
     public Long getCompletedTotal() {
         return completedTotal;
     }
 
-    public void setCompletedTotal(Long completedTotal) {
-        this.completedTotal = completedTotal;
-    }
 
     @Basic
-    @Column(name = "uncompleted_total", nullable = true)
+    @Column(name = "uncompleted_total")
     public Long getUncompletedTotal() {
         return uncompletedTotal;
     }
 
-    public void setUncompletedTotal(Long uncompletedTotal) {
-        this.uncompletedTotal = uncompletedTotal;
-    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Stat stat = (Stat) o;
-        return Objects.equals(id, stat.id) &&
-                Objects.equals(completedTotal, stat.completedTotal) &&
-                Objects.equals(uncompletedTotal, stat.uncompletedTotal);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, completedTotal, uncompletedTotal);
-    }
 }
