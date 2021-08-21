@@ -1,7 +1,8 @@
 package ua.tasklist.backendspringboot.controller;
 
 import lombok.AllArgsConstructor;
-import org.jboss.logging.Logger;
+
+import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,11 @@ import java.util.NoSuchElementException;
 @RequestMapping("/category")
 public class CategoryController {
     private CategoryRepository categoryRepository;
-    private static Logger LOG = Logger.getLogger(CategoryController.class.getName());
+    private  static Logger logger = Logger.getLogger(CategoryController.class.getName());
 
     @GetMapping("/all")
     public List<Category> findAll() {
-        LOG.info("Method finds all category");
+        logger.info("Method finds all category");
         return categoryRepository.findAllByOrderByTitleAsc();
     }
 
@@ -39,7 +40,7 @@ public class CategoryController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        LOG.info("Added new category in table Category");
+        logger.info("Added new category in table Category");
         return ResponseEntity.ok(categoryRepository.save(category));
     }
 
@@ -57,7 +58,7 @@ public class CategoryController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        LOG.info("Update category with id = " + category.getId() + " in table Category");
+        logger.info("Update category with id = " + category.getId() + " in table Category");
         return ResponseEntity.ok(categoryRepository.save(category));
     }
 
@@ -71,7 +72,7 @@ public class CategoryController {
             ex.printStackTrace();
             return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
-        LOG.info("Find category by id = " + id);
+        logger.info("Find category by id = " + id);
         return ResponseEntity.ok(category);
     }
 
@@ -91,7 +92,7 @@ public class CategoryController {
     // поиск по любым параметрам CategorySearchValues
     @PostMapping("/search")
     public ResponseEntity<List<Category>> search (@RequestBody CategorySearchValues categorySearchValues){
-        LOG.info("Method searches category by title ");
+        logger.info("Method searches category by title ");
         // если вместо текста будет null или пусто - вернутся все категории
         return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getTitle()));
     }

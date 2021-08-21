@@ -1,15 +1,13 @@
 package ua.tasklist.backendspringboot.controller;
 
 import lombok.AllArgsConstructor;
-import org.jboss.logging.Logger;
+import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.tasklist.backendspringboot.entity.Category;
 import ua.tasklist.backendspringboot.entity.Priority;
 import ua.tasklist.backendspringboot.repository.PriorityRepository;
-import ua.tasklist.backendspringboot.search.CategorySearchValues;
 import ua.tasklist.backendspringboot.search.PrioritySearchValues;
 
 import java.util.List;
@@ -20,11 +18,12 @@ import java.util.NoSuchElementException;
 @RequestMapping("/priority")
 public class PriorityController {
     private PriorityRepository priorityRepository;
-    private static org.jboss.logging.Logger LOG = Logger.getLogger(PriorityController.class.getName());
+    private  static Logger logger = Logger.getLogger(CategoryController.class.getName());
+
 
     @GetMapping("/all")
     public List<Priority> findAll() {
-        LOG.info("Method finds all category");
+        logger.info("Method finds all category");
         return priorityRepository.findAllByOrderByIdAsc();
     }
 
@@ -47,7 +46,7 @@ public class PriorityController {
             return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        LOG.info("Added new category in table Category");
+        logger.info("Added new category in table Category");
         return ResponseEntity.ok(priorityRepository.save(priority));
     }
 
@@ -69,7 +68,7 @@ public class PriorityController {
             return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        LOG.info("Update category with id = " + priority.getId() + " in table Category");
+        logger.info("Update category with id = " + priority.getId() + " in table Category");
         return ResponseEntity.ok(priorityRepository.save(priority));
     }
 
@@ -85,7 +84,7 @@ public class PriorityController {
             ex.printStackTrace();
             return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
-        LOG.info("Find priority by id = " + id);
+        logger.info("Find priority by id = " + id);
         return ResponseEntity.ok(priority);
     }
 
@@ -103,8 +102,8 @@ public class PriorityController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<Priority>> search (@RequestBody PrioritySearchValues prioritySearchValues){
-        LOG.info("Method searches priority by title ");
+    public ResponseEntity<List<Priority>> search(@RequestBody PrioritySearchValues prioritySearchValues) {
+        logger.info("Method searches priority by title-------------------------------------------------------------------\n\n ");
         // если вместо текста будет null или пусто - вернутся все категории
         return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getTitle()));
     }
