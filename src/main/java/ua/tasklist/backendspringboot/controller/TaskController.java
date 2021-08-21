@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.tasklist.backendspringboot.entity.Task;
 import ua.tasklist.backendspringboot.repository.TaskRepository;
 import ua.tasklist.backendspringboot.search.TaskSearchValues;
+import ua.tasklist.backendspringboot.services.TaskService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,13 +22,13 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/task")
 public class TaskController {
-    private TaskRepository taskRepository;
+    private TaskService taskService;
     private static Logger logger = Logger.getLogger(TaskController.class.getName());
 
     @GetMapping("/all")
     public List<Task> findAll() {
         logger.info("Method finds all task");
-        return taskRepository.findAll();
+        return taskService.findAll();
     }
 
     @PostMapping("/add")
@@ -44,7 +45,7 @@ public class TaskController {
         }
 
         logger.info("Added new task in table Task");
-        return ResponseEntity.ok(taskRepository.save(task));
+        return ResponseEntity.ok(taskService.add(task));
     }
 
 
@@ -62,7 +63,7 @@ public class TaskController {
         }
 
         logger.info("Update task with id = " + task.getId() + " in table Task");
-        return ResponseEntity.ok(taskRepository.save(task));
+        return ResponseEntity.ok(taskService.update(task));
     }
 
     @GetMapping("/id/{id}")
@@ -70,7 +71,7 @@ public class TaskController {
         Task task = null;
 
         try {
-            task = taskRepository.findById(id).get();
+            task = taskService.findById(id);
         } catch (NoSuchElementException ex) {
             ex.printStackTrace();
             return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -84,7 +85,7 @@ public class TaskController {
     public ResponseEntity deleteById(@PathVariable Long id) {
         // можно и без try - catch
         try {
-            taskRepository.deleteById(id);
+            taskService.deleteById(id);
         } catch (EmptyResultDataAccessException ex) {
             ex.printStackTrace();
             return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -118,7 +119,7 @@ public class TaskController {
         //обьект постраничности
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
-        Page result = taskRepository.findByParams(title, completed, priorityId, categoryId, pageRequest);
+        Page result = taskService.findByParams(title, completed, priorityId, categoryId, pageRequest);
         // если вместо параметров будет null или пусто - вернутся все категории
         return ResponseEntity.ok(result);
     }

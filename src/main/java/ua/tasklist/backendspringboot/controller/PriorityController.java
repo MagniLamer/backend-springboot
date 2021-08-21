@@ -9,22 +9,23 @@ import org.springframework.web.bind.annotation.*;
 import ua.tasklist.backendspringboot.entity.Priority;
 import ua.tasklist.backendspringboot.repository.PriorityRepository;
 import ua.tasklist.backendspringboot.search.PrioritySearchValues;
+import ua.tasklist.backendspringboot.services.PriorityService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@AllArgsConstructor // внедрение через конструктор экземпляра priorityRepository
+@AllArgsConstructor // внедрение через конструктор экземпляра priorityService
 @RestController
 @RequestMapping("/priority")
 public class PriorityController {
-    private PriorityRepository priorityRepository;
+    private PriorityService priorityService;
     private  static Logger logger = Logger.getLogger(CategoryController.class.getName());
 
 
     @GetMapping("/all")
     public List<Priority> findAll() {
         logger.info("Method finds all category");
-        return priorityRepository.findAllByOrderByIdAsc();
+        return priorityService.findAll();
     }
 
     @PostMapping("/add")
@@ -47,7 +48,7 @@ public class PriorityController {
         }
 
         logger.info("Added new category in table Category");
-        return ResponseEntity.ok(priorityRepository.save(priority));
+        return ResponseEntity.ok(priorityService.add(priority));
     }
 
     @PutMapping("/update")
@@ -69,7 +70,7 @@ public class PriorityController {
         }
 
         logger.info("Update category with id = " + priority.getId() + " in table Category");
-        return ResponseEntity.ok(priorityRepository.save(priority));
+        return ResponseEntity.ok(priorityService.update(priority));
     }
 
     // параметр id передается не в body запросаб а в самом URL
@@ -79,7 +80,7 @@ public class PriorityController {
         Priority priority = null;
 
         try {
-            priority = priorityRepository.findById(id).get();
+            priority = priorityService.findById(id);
         } catch (NoSuchElementException ex) {
             ex.printStackTrace();
             return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -93,7 +94,7 @@ public class PriorityController {
     public ResponseEntity deleteById(@PathVariable Long id) {
         // можно и без try - catch
         try {
-            priorityRepository.deleteById(id);
+            priorityService.deleteById(id);
         } catch (EmptyResultDataAccessException ex) {
             ex.printStackTrace();
             return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -105,7 +106,7 @@ public class PriorityController {
     public ResponseEntity<List<Priority>> search(@RequestBody PrioritySearchValues prioritySearchValues) {
         logger.info("Method searches priority by title-------------------------------------------------------------------\n\n ");
         // если вместо текста будет null или пусто - вернутся все категории
-        return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getTitle()));
+        return ResponseEntity.ok(priorityService.findByTitle(prioritySearchValues.getTitle()));
     }
 
 }
