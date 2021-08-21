@@ -2,14 +2,15 @@ package ua.tasklist.backendspringboot.controller;
 
 import lombok.AllArgsConstructor;
 import org.jboss.logging.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.tasklist.backendspringboot.entity.Category;
 import ua.tasklist.backendspringboot.entity.Priority;
 import ua.tasklist.backendspringboot.repository.PriorityRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @AllArgsConstructor // внедрение через конструктор экземпляра priorityRepository
 @RestController
@@ -18,15 +19,14 @@ public class PriorityController {
     private PriorityRepository priorityRepository;
     private static org.jboss.logging.Logger LOG = Logger.getLogger(PriorityController.class.getName());
 
-    @GetMapping("/test")
-    public List<Priority> test(){
-        List<Priority> list = priorityRepository.findAll();
-        LOG.info("Method test return list of priority");
-        return list;
+    @GetMapping("/all")
+    public List<Priority> findAll() {
+        LOG.info("Method finds all category");
+        return priorityRepository.findAllByOrderByIdAsc();
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Priority> add(@RequestBody Priority priority){ // @RequestBody преобразовывает обьект в JSON и обратно
+    public ResponseEntity<Priority> add(@RequestBody Priority priority) { // @RequestBody преобразовывает обьект в JSON и обратно
 
         // проверка на обязательные параметры
         if (priority.getId() != null && priority.getId() != 0) {
@@ -39,12 +39,17 @@ public class PriorityController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
+        // если передали пустое значение color
+        if (priority.getColor() == null || priority.getColor().trim().length() == 0) {
+            return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
+        }
+
         LOG.info("Added new category in table Category");
         return ResponseEntity.ok(priorityRepository.save(priority));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Priority> update(@RequestBody Priority priority){
+    public ResponseEntity<Priority> update(@RequestBody Priority priority) {
 
         if ((priority.getId() == null) || (priority.getId() == 0)) {
             // id нужно передавать обязательно -> обновляется обьект по id
@@ -64,5 +69,35 @@ public class PriorityController {
         LOG.info("Update category with id = " + priority.getId() + " in table Category");
         return ResponseEntity.ok(priorityRepository.save(priority));
     }
+
+    // параметр id передается не в body запросаб а в самом URL
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Priority> findById(@PathVariable Long id) {
+
+        Priority priority = null;
+
+        try {
+            priority = priorityRepository.findById(id).get();
+        } catch (NoSuchElementException ex) {
+            ex.printStackTrace();
+            return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+        LOG.info("Find priority by id = " + id);
+        return ResponseEntity.ok(priority);
+    }
+
+    // параметр id передается не в body запросаб а в самом URL
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity deleteById(@PathVariable Long id) {
+        // можно и без try - catch
+        try {
+            priorityRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException ex) {
+            ex.printStackTrace();
+            return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
 
 }
