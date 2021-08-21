@@ -6,8 +6,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.tasklist.backendspringboot.entity.Category;
 import ua.tasklist.backendspringboot.entity.Priority;
 import ua.tasklist.backendspringboot.repository.PriorityRepository;
+import ua.tasklist.backendspringboot.search.CategorySearchValues;
+import ua.tasklist.backendspringboot.search.PrioritySearchValues;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -99,5 +102,11 @@ public class PriorityController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @PostMapping("/search")
+    public ResponseEntity<List<Priority>> search (@RequestBody PrioritySearchValues prioritySearchValues){
+        LOG.info("Method searches priority by title ");
+        // если вместо текста будет null или пусто - вернутся все категории
+        return ResponseEntity.ok(priorityRepository.findByTitle(prioritySearchValues.getTitle()));
+    }
 
 }

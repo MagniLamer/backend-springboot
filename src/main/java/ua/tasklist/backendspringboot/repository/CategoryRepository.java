@@ -14,7 +14,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("SELECT c FROM Category c " +
             "WHERE (:title is null or :title = '' or lower(c.title) like lower(concat('%',:title,'%'))) " +
             "ORDER BY c.title asc")
-    List<Category>findByTitle(@Param("title") String title);
+    List<Category> findByTitle(@Param("title") String title);
 
     List<Category> findAllByOrderByTitleAsc(); // получить все значения, сортировка по title ASC
 }
