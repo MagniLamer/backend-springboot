@@ -3,6 +3,10 @@ package ua.tasklist.backendspringboot.controller;
 import lombok.AllArgsConstructor;
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +22,7 @@ import java.util.NoSuchElementException;
 @RequestMapping("/task")
 public class TaskController {
     private TaskRepository taskRepository;
-    private  static Logger logger = Logger.getLogger(TaskController.class.getName());
+    private static Logger logger = Logger.getLogger(TaskController.class.getName());
 
     @GetMapping("/all")
     public List<Task> findAll() {
@@ -90,17 +94,32 @@ public class TaskController {
 
     // поиск по любым параметрам TaskSearchValues
     @PostMapping("/search")
-    public ResponseEntity<List<Task>> search (@RequestBody TaskSearchValues taskSearchValues){
+    public ResponseEntity<Page<Task>> search(@RequestBody TaskSearchValues taskSearchValues) {
         logger.info("Method searches task by param-------------------- ");
 
-    String title = taskSearchValues.getTitle() != null ? taskSearchValues.getTitle() : null;
-    Integer completed = taskSearchValues.getCompleted() != null ? taskSearchValues.getCompleted() : null;
-    Long priorityId = taskSearchValues.getPriorityId() != null ? taskSearchValues.getPriorityId() : null;
-    Long categoryId = taskSearchValues.getCategoryId() != null ? taskSearchValues.getCategoryId() : null;
+        //избегаем NullPointerException
+        String title = taskSearchValues.getTitle() != null ? taskSearchValues.getTitle() : null;
+        Integer completed = taskSearchValues.getCompleted() != null ? taskSearchValues.getCompleted() : null;
+        Long priorityId = taskSearchValues.getPriorityId() != null ? taskSearchValues.getPriorityId() : null;
+        Long categoryId = taskSearchValues.getCategoryId() != null ? taskSearchValues.getCategoryId() : null;
 
+        String sortColumn = taskSearchValues.getSortColumn() != null ? taskSearchValues.getSortColumn() : null;
+        String sortDirection = taskSearchValues.getSortDirection() != null ? taskSearchValues.getSortDirection() : null;
 
+        Integer pageNumber = taskSearchValues.getPageNumber() != null ? taskSearchValues.getPageNumber() : null;
+        Integer pageSize = taskSearchValues.getPageSize() != null ? taskSearchValues.getPageSize() : null;
 
+        Sort.Direction direction = (sortDirection == null || sortDirection.trim().equals("asc")) ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        // подставляем все значения
+        //обьект сортировки
+        Sort sort = Sort.by(direction, sortColumn );
+
+        //обьект постраничности
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page result = taskRepository.findByParams(title, completed, priorityId, categoryId, pageRequest);
         // если вместо параметров будет null или пусто - вернутся все категории
-        return ResponseEntity.ok(taskRepository.findByParams(title,completed,priorityId,categoryId));
+        return ResponseEntity.ok(result);
     }
 }

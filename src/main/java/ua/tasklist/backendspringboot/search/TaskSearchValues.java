@@ -15,8 +15,16 @@ import java.util.Date;
 
 // возможные значения по которым будем искать
 public class TaskSearchValues {
-    public String title;
-    public Integer completed;
-    public Long priorityId;
-    public Long categoryId;
+    private String title;
+    private Integer completed;
+    private Long priorityId;
+    private Long categoryId;
+
+    // постраничность
+    private Integer pageNumber;
+    private Integer pageSize;
+
+    //сортировка
+    private String sortColumn;
+    private  String sortDirection;
 }
