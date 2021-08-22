@@ -5,13 +5,11 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.tasklist.backendspringboot.entity.Task;
-import ua.tasklist.backendspringboot.repository.TaskRepository;
 import ua.tasklist.backendspringboot.search.TaskSearchValues;
 import ua.tasklist.backendspringboot.services.TaskService;
 

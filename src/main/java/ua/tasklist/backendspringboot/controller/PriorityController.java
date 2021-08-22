@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.tasklist.backendspringboot.entity.Priority;
-import ua.tasklist.backendspringboot.repository.PriorityRepository;
 import ua.tasklist.backendspringboot.search.PrioritySearchValues;
 import ua.tasklist.backendspringboot.services.PriorityService;
 

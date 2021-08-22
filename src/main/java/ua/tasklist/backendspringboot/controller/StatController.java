@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.tasklist.backendspringboot.entity.Stat;
-import ua.tasklist.backendspringboot.repository.StatRepository;
 import ua.tasklist.backendspringboot.services.StatService;
 
 @AllArgsConstructor
