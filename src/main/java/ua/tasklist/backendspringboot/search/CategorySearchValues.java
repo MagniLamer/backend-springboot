@@ -8,5 +8,6 @@ import lombok.*;
 
 // возможные значения по которым будем искать
 public class CategorySearchValues {
+
     public String title;
 }
